@@ -94,7 +94,22 @@ h1{font-size:14px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;
 .resumen{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .resumen .tarjeta{margin:0;text-align:left}
 .resumen .num{font-size:26px;display:block;margin-top:4px}
+.resumen .num small{font-size:13px;color:var(--concreto);font-weight:700;display:block;margin-top:2px}
 #chipGPS{margin-top:12px;min-height:20px}
+
+/* ── Desglose de pago (Fase 2) ───────────────────────── */
+.desglose{margin-top:8px}
+.desglose .fila{padding:8px 0;border-bottom:1px solid var(--linea)}
+.desglose .fila:last-child{border-bottom:none}
+.desglose .fila span:first-child{color:var(--concreto);font-size:14.5px}
+.desglose .fila span.num{font-size:15.5px}
+.desglose .fila.total span:first-child{color:var(--cal);font-weight:800}
+.desglose .fila.total span.num{font-size:19px;color:var(--ambar)}
+.pill-tabs{display:flex;gap:8px;margin-bottom:14px}
+.pill-tabs button{flex:1;min-height:44px;border-radius:12px;border:1.5px solid var(--linea);font-weight:800;font-size:14px;color:var(--concreto)}
+.pill-tabs button.on{background:var(--ambar);color:var(--asfalto);border-color:var(--ambar)}
+.nota-pequena{color:var(--concreto);font-size:13px;line-height:1.5;margin-top:6px}
+.dos-mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* ── Listas (días / proyectos) ───────────────────────── */
 .item{
@@ -165,7 +180,7 @@ details summary{color:var(--concreto);font-weight:700;font-size:14px;padding:8px
 nav{
   position:fixed;bottom:0;left:0;right:0;z-index:70;
   background:var(--panel);border-top:1px solid var(--linea);
-  display:grid;grid-template-columns:repeat(4,1fr);
+  display:grid;grid-template-columns:repeat(5,1fr);
   padding:6px 4px calc(6px + env(safe-area-inset-bottom));
 }
 nav button{
@@ -222,6 +237,34 @@ nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stro
     <div id="listaDias"></div>
   </section>
 
+  <!-- ════════ PAGO ════════ -->
+  <section id="scr-pago" class="pantalla">
+    <div class="encabezado"><h1>Pago</h1><span class="ojal" id="pagoVigencia"></span></div>
+
+    <div class="pill-tabs">
+      <button data-per="hoy" class="on">Hoy</button>
+      <button data-per="semana">Semana</button>
+      <button data-per="mes">Mes</button>
+    </div>
+
+    <div class="tarjeta">
+      <span class="ojal">Horas</span>
+      <div class="desglose" id="pagoHoras"></div>
+    </div>
+
+    <div class="tarjeta">
+      <span class="ojal">Bruto estimado</span>
+      <div class="desglose" id="pagoBruto"></div>
+      <div class="nota-pequena" id="pagoNetoNota"></div>
+    </div>
+
+    <div class="tarjeta">
+      <span class="ojal">Fondos que debe aportar el empleador</span>
+      <div class="desglose" id="pagoFondos"></div>
+      <p class="nota-pequena">Cotéjalo contra tu cuenta en norcalaborers.org a las 4–6 semanas de trabajado.</p>
+    </div>
+  </section>
+
   <!-- ════════ PROYECTOS ════════ -->
   <section id="scr-proyectos" class="pantalla">
     <div class="encabezado"><h1>Proyectos</h1></div>
@@ -232,6 +275,23 @@ nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stro
   <!-- ════════ AJUSTES ════════ -->
   <section id="scr-ajustes" class="pantalla">
     <div class="encabezado"><h1>Ajustes</h1></div>
+
+    <div class="tarjeta">
+      <span class="ojal">Tarifas vigentes (Grupo 3 · Rate A)</span>
+      <div id="listaTarifas" style="margin-top:8px"></div>
+      <button id="btnNuevaTarifa" class="btn-sec amb" style="margin-top:4px">+ Nueva vigencia (aumento anual)</button>
+    </div>
+
+    <div class="tarjeta">
+      <span class="ojal">Calibrar neto</span>
+      <p class="nota-pequena">Ingresa el bruto y neto de un talón real. La app calcula el % de deducción y lo usa para estimar tu neto en el dashboard de Pago.</p>
+      <div class="dos-mini" style="margin-top:10px">
+        <div class="campo" style="margin-bottom:0"><label>Bruto del talón</label><input type="number" id="calBruto" placeholder="1,838" inputmode="decimal"></div>
+        <div class="campo" style="margin-bottom:0"><label>Neto del talón</label><input type="number" id="calNeto" placeholder="1,290" inputmode="decimal"></div>
+      </div>
+      <button id="btnCalibrar" class="btn-sec amb" style="margin-top:10px">Guardar calibración</button>
+      <div class="mono" id="calEstado" style="margin-top:8px"></div>
+    </div>
 
     <div class="tarjeta">
       <span class="ojal">Respaldo</span>
@@ -253,9 +313,9 @@ nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stro
     <div class="tarjeta">
       <span class="ojal">Acerca de</span>
       <p style="color:var(--concreto);font-size:14px;margin-top:8px;line-height:1.6">
-        Tarjeta 324 · Fase 1 (núcleo)<br>
-        Reglas de pago LMA 2022-2027 · Grupo 3 Rate A precargado<br>
-        Próxima fase: motor de pago completo (OT, DT, fondos, dashboard).</p>
+        Tarjeta 324 · Fase 2 (motor de pago)<br>
+        Reglas de pago LMA 2022-2027 · Sección 20A (OT/DT), 23 (festivos), 28A (fondos)<br>
+        Próxima fase: calendario mensual, millaje, gastos y fotos.</p>
     </div>
   </section>
 </main>
@@ -266,6 +326,8 @@ nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stro
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Inicio</button>
   <button data-scr="scr-dias">
     <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Días</button>
+  <button data-scr="scr-pago">
+    <svg viewBox="0 0 24 24"><path d="M4 17V9M10 17V5M16 17v-7M4 20h16"/></svg>Pago</button>
   <button data-scr="scr-proyectos">
     <svg viewBox="0 0 24 24"><path d="M4 20V10l8-6 8 6v10"/><path d="M4 13h16"/></svg>Proyectos</button>
   <button data-scr="scr-ajustes">
@@ -304,6 +366,13 @@ nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stro
 
   <div class="aviso-premium" id="ms-premios"></div>
 
+  <div class="campo" id="rowReposicion" style="display:none">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+      <input type="checkbox" id="ms-reposicion" style="width:22px;min-height:22px;flex:none">
+      <span>Sábado de reposición (se perdió un día por clima, avería o falta de material → se paga 1.0x)</span>
+    </label>
+  </div>
+
   <div class="campo">
     <label>Nota del día (opcional)</label>
     <textarea id="ms-notas" rows="2" placeholder="Equipo, trabajo realizado, incidentes…"></textarea>
@@ -338,6 +407,12 @@ nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stro
   </div>
   <div class="campo"><label>Cliente</label><input id="pf-cliente"></div>
   <div class="campo"><label>Descripción</label><input id="pf-desc"></div>
+  <div class="campo">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+      <input type="checkbox" id="pf-zona" style="width:22px;min-height:22px;flex:none">
+      <span>Zone pay ($3.00/h extra en este proyecto)</span>
+    </label>
+  </div>
   <button class="btn-sec" id="pf-estado" style="display:none">Desactivar proyecto</button>
   <div class="acciones">
     <button class="btn-sec" id="pf-cancelar">Cancelar</button>
@@ -367,6 +442,13 @@ nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stro
   <div class="etiqueta">Break 2</div>
   <div class="seg c2" id="eB2"><button class="ok" data-v="tomado">Sí</button><button class="mal" data-v="negado">Negado</button></div>
 
+  <div class="campo" id="rowEReposicion" style="display:none;margin-top:10px">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+      <input type="checkbox" id="e-reposicion" style="width:22px;min-height:22px;flex:none">
+      <span>Sábado de reposición (pagado 1.0x)</span>
+    </label>
+  </div>
+
   <div class="campo" style="margin-top:12px"><label>Notas</label><textarea id="e-notas" rows="2"></textarea></div>
   <div class="mono" id="e-gps"></div>
   <details><summary>Bitácora de cambios</summary><div id="e-bitacora"></div></details>
@@ -384,6 +466,33 @@ nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stro
   <div class="sub" id="olv-info"></div>
   <div class="campo"><label>¿A qué hora saliste?</label><input type="datetime-local" id="olv-salida"></div>
   <button class="btn-confirmar" id="olv-continuar" style="width:100%">Continuar a la salida</button>
+</div>
+
+<!-- ════════ HOJA: NUEVA VIGENCIA DE TARIFAS ════════ -->
+<div id="m-tarifa" class="hoja">
+  <h2>Nueva vigencia de tarifas</h2>
+  <div class="sub">Cuando el LMA sube las tarifas cada año, agrega la nueva fecha aquí. Los días anteriores siguen calculando con la tarifa vieja.</div>
+  <div class="campo"><label>Vigente desde</label><input type="date" id="rt-fecha"></div>
+  <div class="dos-mini">
+    <div class="campo"><label>Base ($/h)</label><input type="number" id="rt-base" step="0.01" inputmode="decimal"></div>
+    <div class="campo"><label>Health & Welfare</label><input type="number" id="rt-hw" step="0.01" inputmode="decimal"></div>
+  </div>
+  <div class="dos-mini">
+    <div class="campo"><label>Pensión</label><input type="number" id="rt-pension" step="0.01" inputmode="decimal"></div>
+    <div class="campo"><label>Annuity</label><input type="number" id="rt-annuity" step="0.01" inputmode="decimal"></div>
+  </div>
+  <div class="dos-mini">
+    <div class="campo"><label>Vacation/Holiday/Dues</label><input type="number" id="rt-vac" step="0.01" inputmode="decimal"></div>
+    <div class="campo"><label>Training/LECET</label><input type="number" id="rt-train" step="0.01" inputmode="decimal"></div>
+  </div>
+  <div class="dos-mini">
+    <div class="campo"><label>Contract Admin</label><input type="number" id="rt-admin" step="0.01" inputmode="decimal"></div>
+    <div class="campo"><label>Industry Stabilization</label><input type="number" id="rt-stab" step="0.01" inputmode="decimal"></div>
+  </div>
+  <div class="acciones">
+    <button class="btn-sec" id="rt-cancelar">Cancelar</button>
+    <button class="btn-confirmar" id="rt-guardar">Guardar</button>
+  </div>
 </div>
 
 <!-- ════════ HOJA: CONFIRMACIÓN GENÉRICA ════════ -->
@@ -475,6 +584,112 @@ function premiosDe(l,b1,b2){
   if(b1==='negado'||b2==='negado') p.push({tipo:'descanso',horas:1});
   return p;
 }
+const PRECIO_ZONA=3.00;
+
+/* ── Motor de pago (LMA Grupo 3 · Sección 20A, 23, 28A) ── */
+
+/* Festivos reconocidos: Año Nuevo, Presidents Day (3er lunes feb), Memorial Day (último lunes mayo),
+   4 de Julio, Labor Day (1er lunes sep), Thanksgiving (4to jueves nov), viernes siguiente, Navidad.
+   Si cae domingo → se observa el lunes. Si cae sábado → se observa el viernes anterior. */
+function festivosDelAno(anio){
+  const L=[];
+  const nesimoLunes=(mes,n)=>{ const d=new Date(anio,mes,1); let c=0;
+    while(true){ if(d.getDay()===1){ c++; if(c===n) return new Date(d); } d.setDate(d.getDate()+1); } };
+  const ultimoLunes=(mes)=>{ const d=new Date(anio,mes+1,0); while(d.getDay()!==1) d.setDate(d.getDate()-1); return new Date(d); };
+  const nesimoJueves=(mes,n)=>{ const d=new Date(anio,mes,1); let c=0;
+    while(true){ if(d.getDay()===4){ c++; if(c===n) return new Date(d); } d.setDate(d.getDate()+1); } };
+  const observado=(d)=>{ const dd=new Date(d); if(dd.getDay()===0) dd.setDate(dd.getDate()+1);
+    else if(dd.getDay()===6) dd.setDate(dd.getDate()-1); return dd; };
+  const agr=(nombre,fecha)=>L.push({nombre,fecha:observado(fecha)});
+  agr("Año Nuevo",new Date(anio,0,1));
+  agr("Presidents' Day",nesimoLunes(1,3));
+  agr("Memorial Day",ultimoLunes(4));
+  agr("4 de Julio",new Date(anio,6,4));
+  agr("Labor Day",nesimoLunes(8,1));
+  const tg=nesimoJueves(10,4); agr("Thanksgiving",tg);
+  const tgDia=new Date(tg); tgDia.setDate(tgDia.getDate()+1); agr("Día después de Thanksgiving",tgDia);
+  agr("Navidad",new Date(anio,11,25));
+  return L;
+}
+let holidaySet=null;
+async function cargarHolidays(){
+  let hs=await dbAll('holidays');
+  if(!hs.length){
+    const hoy=new Date().getFullYear();
+    for(const anio of [hoy-1,hoy,hoy+1,hoy+2])
+      for(const h of festivosDelAno(anio)) await dbPut('holidays',{fecha:fechaStr(h.fecha.getTime()),nombre:h.nombre,editable:true});
+    hs=await dbAll('holidays');
+  }
+  holidaySet=new Map(hs.map(h=>[h.fecha,h.nombre]));
+}
+function diaTipo(fechaStr_){
+  const d=new Date(fechaStr_+'T12:00:00');
+  if(holidaySet && holidaySet.has(fechaStr_)) return 'festivo';
+  if(d.getDay()===0) return 'domingo';
+  if(d.getDay()===6) return 'sabado';
+  return 'laboral';
+}
+/* Clasifica horas netas de UN turno en reg/OT/DT según el tipo de día (Sección 20A) */
+function clasificarHoras(horasNetas,tipo,reposicion){
+  if(tipo==='domingo'||tipo==='festivo') return {reg:0,ot:0,dt:round2(horasNetas)};
+  if(tipo==='sabado'){
+    if(reposicion) return {reg:round2(horasNetas),ot:0,dt:0};
+    return {reg:0,ot:round2(horasNetas),dt:0};
+  }
+  const reg=Math.min(horasNetas,8), ot=Math.min(Math.max(horasNetas-8,0),4), dt=Math.max(horasNetas-12,0);
+  return {reg:round2(reg),ot:round2(ot),dt:round2(dt)};
+}
+function round2(n){ return Math.round(n*100)/100; }
+
+async function tarifaPara(fechaStr_){
+  const rs=(await dbAll('rate_periods')).sort((a,b)=>a.vigente_desde<b.vigente_desde?1:-1);
+  return rs.find(r=>r.vigente_desde<=fechaStr_) || rs[0] || null;
+}
+function totalFondos(r){ return !r?0:round2(r.hw+r.pension+r.annuity+r.vacation+r.training+r.contract_admin+r.industry_stab); }
+
+/* Desglose completo en $ de un turno cerrado */
+async function calcularTurno(s){
+  const r=await tarifaPara(s.fecha);
+  if(!r) return null;
+  const proj=proyDe(s.project_id);
+  const netas=msNetos(s)/3600000;
+  const tipo=diaTipo(s.fecha);
+  const {reg,ot,dt}=clasificarHoras(netas,tipo,!!s.sabado_reposicion);
+  const base=r.base;
+  const brutoBase=round2(reg*base + ot*base*1.5 + dt*base*2);
+  const zonaOn=proj&&proj.zone_pay;
+  const brutoZona=zonaOn?round2(reg*PRECIO_ZONA + ot*PRECIO_ZONA*1.5 + dt*PRECIO_ZONA*2):0;
+  const horasPremio=(s.premios||[]).reduce((a,p)=>a+p.horas,0);
+  const brutoPremio=round2(horasPremio*base);
+  const bruto=round2(brutoBase+brutoZona+brutoPremio);
+  const horasPagadas=round2(netas+horasPremio);
+  const fondosMonto=round2(horasPagadas*totalFondos(r));
+  return {fecha:s.fecha,tipo,reg,ot,dt,netas,horasPremio,horasPagadas,brutoBase,brutoZona,brutoPremio,bruto,
+    fondosMonto,fondosHoras:horasPagadas,rate:r};
+}
+
+/* Agrega varios turnos cerrados en un rango */
+async function agregarPago(shifts){
+  const acc={reg:0,ot:0,dt:0,horasPremio:0,horasPagadas:0,brutoBase:0,brutoZona:0,brutoPremio:0,bruto:0,
+    fondosMonto:0,fondos:{hw:0,pension:0,annuity:0,vacation:0,training:0,contract_admin:0,industry_stab:0}};
+  for(const s of shifts){
+    if(s.estado!=='cerrado'||s.anulado) continue;
+    const c=await calcularTurno(s); if(!c) return null;
+    acc.reg+=c.reg; acc.ot+=c.ot; acc.dt+=c.dt; acc.horasPremio+=c.horasPremio; acc.horasPagadas+=c.horasPagadas;
+    acc.brutoBase+=c.brutoBase; acc.brutoZona+=c.brutoZona; acc.brutoPremio+=c.brutoPremio; acc.bruto+=c.bruto;
+    acc.fondosMonto+=c.fondosMonto;
+    const r=c.rate;
+    acc.fondos.hw+=c.fondosHoras*r.hw; acc.fondos.pension+=c.fondosHoras*r.pension;
+    acc.fondos.annuity+=c.fondosHoras*r.annuity; acc.fondos.vacation+=c.fondosHoras*r.vacation;
+    acc.fondos.training+=c.fondosHoras*r.training; acc.fondos.contract_admin+=c.fondosHoras*r.contract_admin;
+    acc.fondos.industry_stab+=c.fondosHoras*r.industry_stab;
+  }
+  for(const k of ['reg','ot','dt','horasPremio','horasPagadas','brutoBase','brutoZona','brutoPremio','bruto','fondosMonto'])
+    acc[k]=round2(acc[k]);
+  for(const k in acc.fondos) acc.fondos[k]=round2(acc.fondos[k]);
+  return acc;
+}
+function fmtUSD(n){ return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 
 /* ── GPS y direcciones ── */
 function getGPS(){
@@ -548,8 +763,13 @@ async function renderResumen(){
     if(s.fecha===hoy) msHoy+=n;
     if(s.entrada>=sem) msSem+=n;
   }
-  $('resHoy').textContent=horasDec(msHoy)+' h';
-  $('resSemana').textContent=horasDec(msSem)+' h';
+  $('resHoy').innerHTML=horasDec(msHoy)+' h';
+  $('resSemana').innerHTML=horasDec(msSem)+' h';
+  const cerrados=ss.filter(s=>s.estado==='cerrado');
+  const agHoy=await agregarPago(cerrados.filter(s=>s.fecha===hoy));
+  const agSem=await agregarPago(cerrados.filter(s=>s.entrada>=sem));
+  if(agHoy) $('resHoy').innerHTML+=' <small>'+fmtUSD(agHoy.bruto)+'</small>';
+  if(agSem) $('resSemana').innerHTML+=' <small>'+fmtUSD(agSem.bruto)+'</small>';
 }
 function tic(){
   const ahora=Date.now();
@@ -585,6 +805,9 @@ function abrirSalida(tsFijo){
   gpsSalidaProm = getGPS();
   segPoner('segLunch','tomado'); segPoner('segB1','tomado'); segPoner('segB2','tomado');
   $('lunchMin').value=30; $('ms-notas').value=turnoAbierto.notas||'';
+  const esSab=new Date(turnoAbierto.entrada).getDay()===6;
+  $('rowReposicion').style.display=esSab?'':'none';
+  $('ms-reposicion').checked=false;
   previewSalida();
   abrirHoja('m-salida');
 }
@@ -613,6 +836,7 @@ async function confirmarSalida(){
   s.break1={estado:segLeer('segB1')}; s.break2={estado:segLeer('segB2')};
   s.premios=premiosDe(s.lunch.estado,s.break1.estado,s.break2.estado);
   s.notas=$('ms-notas').value.trim();
+  s.sabado_reposicion = $('rowReposicion').style.display!=='none' && $('ms-reposicion').checked;
   s.estado='cerrado';
   if(salidaFijaTs) s.bitacora.push({ts:Date.now(),campo:'cierre tardío',antes:'',despues:fmtHora(out)});
   const g=await Promise.race([gpsSalidaProm,new Promise(r=>setTimeout(r,2500))]);
@@ -719,6 +943,8 @@ async function abrirEditor(id){
     $('e-lunchMin').value=(s.lunch&&s.lunch.minutos)||30;
     segPoner('eB1',(s.break1&&s.break1.estado)||'tomado');
     segPoner('eB2',(s.break2&&s.break2.estado)||'tomado');
+    $('rowEReposicion').style.display=new Date(s.entrada).getDay()===6?'':'none';
+    $('e-reposicion').checked=!!s.sabado_reposicion;
     $('e-notas').value=s.notas||'';
     $('e-gps').innerHTML=[s.gps_entrada&&gpsTexto(s.gps_entrada,'Entrada'),
                           s.gps_salida&&gpsTexto(s.gps_salida,'Salida')].filter(Boolean).join('<br>');
@@ -737,6 +963,8 @@ async function abrirEditor(id){
     sel.value=await cfgGet('proyectoActual')||'';
     segPoner('eLunch','tomado'); $('e-lunchMin').value=30;
     segPoner('eB1','tomado'); segPoner('eB2','tomado');
+    $('rowEReposicion').style.display=new Date(base.getTime()).getDay()===6?'':'none';
+    $('e-reposicion').checked=false;
     $('e-notas').value=''; $('e-gps').textContent=''; $('e-bitacora').textContent='—';
     $('e-anular').style.display='none';
   }
@@ -771,18 +999,21 @@ async function guardarEditor(){
     F('break 1',(s.break1&&s.break1.estado)||'—',b1);
     F('break 2',(s.break2&&s.break2.estado)||'—',b2);
     F('notas',s.notas||'—',notas||'—');
+    const repos=new Date(ent).getDay()===6 && $('e-reposicion').checked;
+    F('sábado reposición',s.sabado_reposicion?'sí':'no',repos?'sí':'no');
     s.entrada=ent; s.fecha=fechaStr(ent);
     if(!esAbierto){ s.salida=sal; s.estado='cerrado'; }
     s.project_id=pid;
     s.lunch={estado:l,minutos:min}; s.break1={estado:b1}; s.break2={estado:b2};
-    s.premios=premiosDe(l,b1,b2); s.notas=notas;
+    s.premios=premiosDe(l,b1,b2); s.notas=notas; s.sabado_reposicion=repos;
     s.bitacora=(s.bitacora||[]).concat(bit);
     await dbPut('shifts',s);
     if(turnoAbierto&&turnoAbierto.id===s.id) turnoAbierto=s;
   }else{
     const s={fecha:fechaStr(ent),entrada:ent,salida:sal,gps_entrada:null,gps_salida:null,
       project_id:pid,lunch:{estado:l,minutos:min},break1:{estado:b1},break2:{estado:b2},
-      premios:premiosDe(l,b1,b2),notas,estado:'cerrado',anulado:false,creado:Date.now(),
+      premios:premiosDe(l,b1,b2),notas,sabado_reposicion:(new Date(ent).getDay()===6 && $('e-reposicion').checked),
+      estado:'cerrado',anulado:false,creado:Date.now(),
       bitacora:[{ts:Date.now(),campo:'creación retroactiva',antes:'',despues:''}]};
     await dbPut('shifts',s);
   }
@@ -809,7 +1040,8 @@ async function renderProyectos(){
   for(const p of proyectos){
     const el=document.createElement('button'); el.className='item';
     el.innerHTML='<div class="fila"><span class="titulo">'+esc(p.nombre)+
-      (p.activo?'<span class="sello verde">ACTIVO</span>':'<span class="sello gris">INACTIVO</span>')+'</span></div>'+
+      (p.activo?'<span class="sello verde">ACTIVO</span>':'<span class="sello gris">INACTIVO</span>')+
+      (p.zone_pay?'<span class="sello gris">ZONA +$3</span>':'')+'</span></div>'+
       '<div class="sub">'+esc([p.pm_numero&&('PM '+p.pm_numero),p.cliente,p.cost_code].filter(Boolean).join(' · '))+'</div>';
     el.onclick=()=>abrirProyForm(p.id);
     cont.appendChild(el);
@@ -824,6 +1056,7 @@ async function abrirProyForm(id){
   $('pf-cost').value=p?p.cost_code:'';
   $('pf-cliente').value=p?p.cliente:'';
   $('pf-desc').value=p?p.descripcion:'';
+  $('pf-zona').checked=p?!!p.zone_pay:false;
   $('pf-estado').style.display=p?'':'none';
   if(p) $('pf-estado').textContent=p.activo?'Desactivar proyecto':'Reactivar proyecto';
   abrirHoja('m-proyForm');
@@ -834,7 +1067,7 @@ async function guardarProy(){
   const base=proyEditId?proyDe(proyEditId):{activo:true,creado:Date.now()};
   const p=Object.assign({},base,{nombre,pm_numero:$('pf-pm').value.trim(),
     cost_code:$('pf-cost').value.trim(),cliente:$('pf-cliente').value.trim(),
-    descripcion:$('pf-desc').value.trim()});
+    descripcion:$('pf-desc').value.trim(),zone_pay:$('pf-zona').checked});
   const id=await dbPut('projects',p);
   if(!proyEditId) await cfgSet('proyectoActual',id);
   cerrarHojas(); await cargarEstado(); renderProyectos(); renderInicio();
@@ -873,6 +1106,34 @@ async function renderAjustes(){
   $('datoProys').textContent=proyectos.length;
   const u=await cfgGet('ultRespaldo');
   $('ultRespaldo').textContent=u?'Último respaldo: '+new Date(u).toLocaleString('es'):'Sin respaldos todavía.';
+  await renderTarifas();
+  const pct=await cfgGet('pctDeduccion',null);
+  $('calEstado').textContent = pct!=null ? 'Calibrado: '+Math.round(pct*100)+'% de deducción' : 'Sin calibrar todavía.';
+}
+async function renderTarifas(){
+  const rs=(await dbAll('rate_periods')).sort((a,b)=>b.vigente_desde<a.vigente_desde?-1:1);
+  $('listaTarifas').innerHTML = rs.map(r=>
+    '<div class="fila" style="padding:8px 0;border-bottom:1px solid var(--linea)">'+
+    '<span>'+esc(r.vigente_desde)+'</span>'+
+    '<span class="num">'+fmtUSD(r.base)+'/h + '+fmtUSD(totalFondos(r))+' fondos</span></div>'
+  ).join('') || '<div class="nota-pequena">Sin tarifas.</div>';
+}
+async function guardarTarifa(){
+  const fecha=$('rt-fecha').value;
+  if(!fecha){ toast('Falta la fecha de vigencia'); return; }
+  const num=id=>parseFloat($(id).value)||0;
+  await dbPut('rate_periods',{vigente_desde:fecha,base:num('rt-base'),hw:num('rt-hw'),pension:num('rt-pension'),
+    annuity:num('rt-annuity'),vacation:num('rt-vac'),training:num('rt-train'),
+    contract_admin:num('rt-admin'),industry_stab:num('rt-stab'),nota:'agregado manual'});
+  cerrarHojas(); renderTarifas(); renderPago(); renderInicio();
+  toast('Tarifa guardada');
+}
+async function guardarCalibracion(){
+  const b=parseFloat($('calBruto').value), n=parseFloat($('calNeto').value);
+  if(!b||!n||n>b){ toast('Revisa los montos del talón'); return; }
+  await cfgSet('pctDeduccion',1-(n/b));
+  $('calEstado').textContent='Calibrado: '+Math.round((1-n/b)*100)+'% de deducción';
+  renderPago(); toast('Neto calibrado');
 }
 async function exportarRespaldo(){
   const datos={};
@@ -938,10 +1199,58 @@ function nav(scr){
   $(scr).classList.add('visible');
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('activo',b.dataset.scr===scr));
   if(scr==='scr-dias') renderDias();
+  if(scr==='scr-pago') renderPago();
   if(scr==='scr-proyectos') renderProyectos();
   if(scr==='scr-ajustes') renderAjustes();
   if(scr==='scr-inicio') renderInicio();
 }
+
+/* ── Pantalla: Pago (Fase 2) ── */
+let pagoPeriodo='hoy';
+function rangoPeriodo(per){
+  const hoy=new Date(); hoy.setHours(0,0,0,0);
+  if(per==='hoy') return [hoy.getTime(), hoy.getTime()+86400000];
+  if(per==='semana'){ const ini=inicioSemana(Date.now()); return [ini, ini+7*86400000]; }
+  const ini=new Date(hoy.getFullYear(),hoy.getMonth(),1).getTime();
+  const fin=new Date(hoy.getFullYear(),hoy.getMonth()+1,1).getTime();
+  return [ini,fin];
+}
+async function renderPago(){
+  const r=await tarifaPara(fechaStr(Date.now()));
+  $('pagoVigencia').textContent=r?('Vigente desde '+r.vigente_desde):'';
+  const [ini,fin]=rangoPeriodo(pagoPeriodo);
+  const ss=(await dbAll('shifts')).filter(s=>!s.anulado && s.estado==='cerrado' && s.entrada>=ini && s.entrada<fin);
+  const ag=await agregarPago(ss);
+  if(!ag){
+    $('pagoHoras').innerHTML='<div class="fila"><span>Sin tarifas configuradas</span></div>';
+    $('pagoBruto').innerHTML=''; $('pagoFondos').innerHTML=''; return;
+  }
+  $('pagoHoras').innerHTML=
+    fila('Regular',ag.reg+' h')+fila('Tiempo y medio (OT)',ag.ot+' h')+fila('Doble tiempo (DT)',ag.dt+' h')+
+    fila('Premiums (lunch/break)',ag.horasPremio+' h')+
+    filaTotal('Total pagado',ag.horasPagadas+' h');
+  $('pagoBruto').innerHTML=
+    fila('Base + OT/DT',fmtUSD(ag.brutoBase))+
+    (ag.brutoZona?fila('Zone pay',fmtUSD(ag.brutoZona)):'')+
+    (ag.brutoPremio?fila('Premiums',fmtUSD(ag.brutoPremio)):'')+
+    filaTotal('Bruto estimado',fmtUSD(ag.bruto));
+  const pct=await cfgGet('pctDeduccion',null);
+  if(pct!=null){
+    const neto=ag.bruto*(1-pct);
+    $('pagoBruto').innerHTML+=filaTotal('Neto estimado ('+Math.round(pct*100)+'% deducido)',fmtUSD(neto));
+    $('pagoNetoNota').textContent='';
+  }else{
+    $('pagoNetoNota').textContent='Calibra tu neto en Ajustes con un talón real para ver el estimado.';
+  }
+  $('pagoFondos').innerHTML=
+    fila('Health & Welfare',fmtUSD(ag.fondos.hw))+fila('Pensión',fmtUSD(ag.fondos.pension))+
+    fila('Annuity',fmtUSD(ag.fondos.annuity))+fila('Vacation/Holiday/Dues',fmtUSD(ag.fondos.vacation))+
+    fila('Training/LECET',fmtUSD(ag.fondos.training))+fila('Contract Admin',fmtUSD(ag.fondos.contract_admin))+
+    fila('Industry Stabilization',fmtUSD(ag.fondos.industry_stab))+
+    filaTotal('Total fondos',fmtUSD(ag.fondosMonto));
+}
+function fila(a,b){ return '<div class="fila"><span>'+esc(a)+'</span><span class="num">'+esc(b)+'</span></div>'; }
+function filaTotal(a,b){ return '<div class="fila total"><span>'+esc(a)+'</span><span class="num">'+esc(b)+'</span></div>'; }
 
 /* ── Eventos ── */
 function conectar(){
@@ -951,6 +1260,7 @@ function conectar(){
   $('ms-cancelar').onclick=()=>cerrarHojas();
   $('lunchMin').oninput=previewSalida;
   $('btnAgregarDia').onclick=()=>abrirEditor(null);
+  $('e-entrada').onchange=()=>{ $('rowEReposicion').style.display=new Date(localToTs($('e-entrada').value)).getDay()===6?'':'none'; };
   $('e-guardar').onclick=guardarEditor;
   $('e-cerrar').onclick=()=>cerrarHojas();
   $('e-anular').onclick=anularDia;
@@ -967,6 +1277,18 @@ function conectar(){
   };
   $('conf-si').onclick=()=>{ hojaBloqueada=false; cerrarHojas(); if(confRes){confRes(true);confRes=null;} };
   $('conf-no').onclick=()=>{ hojaBloqueada=false; cerrarHojas(); if(confRes){confRes(false);confRes=null;} };
+  document.querySelectorAll('.pill-tabs button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('.pill-tabs button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); pagoPeriodo=b.dataset.per; renderPago();
+  });
+  $('btnNuevaTarifa').onclick=()=>{
+    $('rt-fecha').value=''; ['rt-base','rt-hw','rt-pension','rt-annuity','rt-vac','rt-train','rt-admin','rt-stab']
+      .forEach(id=>$(id).value='');
+    abrirHoja('m-tarifa');
+  };
+  $('rt-cancelar').onclick=()=>cerrarHojas();
+  $('rt-guardar').onclick=guardarTarifa;
+  $('btnCalibrar').onclick=guardarCalibracion;
   $('btnExportar').onclick=exportarRespaldo;
   $('btnRestaurar').onclick=()=>$('inputRestaurar').click();
   $('inputRestaurar').onchange=e=>{ if(e.target.files[0]) restaurarRespaldo(e.target.files[0]); e.target.value=''; };
@@ -978,6 +1300,7 @@ function conectar(){
 (async function(){
   await abrirDB();
   await sembrar();
+  await cargarHolidays();
   await cargarEstado();
   conectar();
   renderInicio();

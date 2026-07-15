@@ -1,5 +1,5 @@
 /* Tarjeta 324 — service worker · Fase 1 */
-const CACHE = 'tarjeta324-f1-v1';
+const CACHE = 'tarjeta324-f2-v1';
 const ARCHIVOS = [
   './',
   './index.html',
